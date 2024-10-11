@@ -32,4 +32,14 @@ public class AuctionService : IAuctionService
         Auction auction = new Auction(-10,title,"",price,endDate,username);
         _auctionPersistance.AddAuction(auction);
     }
+
+    public void ChangeAuctionDecription(int auctionId, string description, String username)
+    {
+        if (auctionId < 1 || description == null || username == null)
+        {
+            throw new ArgumentNullException();
+        }
+        
+        _auctionPersistance.ChangeAuctionDescription(auctionId, description,username);
+    }
 }

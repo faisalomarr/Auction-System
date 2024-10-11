@@ -31,10 +31,7 @@ public class MySqlAuctionPersistance : IAuctionPersistance
         return auctions;
     }
 
-    public void AddAuction()
-    {
-        throw new NotImplementedException();
-    }
+   
 
     // Implementing AddAuction
     public void AddAuction(Auction auction)
@@ -63,4 +60,38 @@ public class MySqlAuctionPersistance : IAuctionPersistance
             
         }
     }
+
+    public void ChangeAuctionDescription(int auctionId, string newDescription, string username)
+    {
+        try
+        {
+            // Find the auction by ID
+            var auctionDb = auctionDbContext.AuctionsDbs.FirstOrDefault(a => a.Id == auctionId);
+        
+            // Check if the auction exists
+            if (auctionDb == null)
+            {
+                Console.WriteLine($"Auction with ID {auctionId} not found.");
+                return;
+            }
+
+            if (!auctionDb.Username.Equals(username))
+            {
+                Console.WriteLine($"username does not own auction with ID {auctionId}");
+                return;
+            }
+
+            // Update the auction's description
+            auctionDb.Description = newDescription;
+
+            // Save the changes to the database
+            auctionDbContext.SaveChanges();
+        }
+        catch (Exception ex)
+        {
+            // Handle the error (e.g., log it) and indicate failure
+            Console.WriteLine($"Error updating auction description: {ex.Message}");
+        }
+    }
+
 }

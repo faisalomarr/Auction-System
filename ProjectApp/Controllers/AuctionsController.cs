@@ -69,15 +69,20 @@ namespace ProjectApp.Controllers
         // POST: AuctionsController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, ChangeDescriptionAuctionVm changeDescriptionAuctionVm)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                if (ModelState.IsValid)
+                {
+                    _auctionService.ChangeAuctionDecription(changeDescriptionAuctionVm.Id,changeDescriptionAuctionVm.description,User.Identity.Name);
+                    return RedirectToAction("Index");
+                }
+                return View(changeDescriptionAuctionVm);
             }
             catch
             {
-                return View();
+                return View(changeDescriptionAuctionVm);
             }
         }
 
