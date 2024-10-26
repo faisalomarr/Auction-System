@@ -27,6 +27,32 @@ namespace ProjectApp.Controllers
 
             return View(auctionsVms);
         }
+        
+        [HttpGet("Auctions/IndexByUserBids")] 
+        public ActionResult IndexByBid()
+        {
+                List<AuctionsFromBidVm> auctionsVms = new List<AuctionsFromBidVm>();
+
+                try
+                {
+                    // Get auctions where the logged-in user has placed bids
+                    List<Auction> auctions = _auctionService.GetAuctionsWhereBid(User.Identity.Name);
+
+                    // Convert auctions to view models
+                    foreach (Auction auction in auctions)
+                    {
+                        auctionsVms.Add(AuctionsFromBidVm.FromAuction(auction));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ErrorMessage = "An error occurred while loading auctions. Please try again later.";
+                }
+
+                return View(auctionsVms);
+            }
+
+        
 
         // GET: AuctionsController/Details/5
         public ActionResult Details(int id)

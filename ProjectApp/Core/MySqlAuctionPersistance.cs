@@ -31,7 +31,34 @@ public class MySqlAuctionPersistance : IAuctionPersistance
         return auctions;
     }
 
-   
+    public List<Auction> GetAuctionsWhereBid(string username)
+    {
+        List<AuctionDb> auctionDbs = (from bid in auctionDbContext.BidDbs
+            join auction in auctionDbContext.AuctionsDbs
+                on bid.AuctionId equals auction.Id
+            where bid.username == username
+            select auction).ToList();
+
+        // Step 2: Convert each AuctionDb to an Auction using a constructor
+        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction(
+            auctionDb.Id,
+            auctionDb.Name,
+            auctionDb.Description,
+            auctionDb.StartPrice,
+            auctionDb.AuctionEndTime,
+            auctionDb.Username
+        )).ToList();
+
+        // Step 3: Return the list of Auction objects
+        return auctions;
+        
+    }
+
+    public List<Auction> GetAuctionsWhereBidHighest(string username)
+    {
+        return null;
+    }
+
 
     // Implementing AddAuction
     public void AddAuction(Auction auction)

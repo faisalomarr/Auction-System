@@ -7629,11 +7629,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\faisa\\RiderProjects\\ProjectApp\\ProjectApp\\ProjectApp.csproj",
+      "projectUniqueName": "C:\\Users\\faisa\\githubproj\\DistLabb2\\ProjectApp\\ProjectApp.csproj",
       "projectName": "ProjectApp",
-      "projectPath": "C:\\Users\\faisa\\RiderProjects\\ProjectApp\\ProjectApp\\ProjectApp.csproj",
+      "projectPath": "C:\\Users\\faisa\\githubproj\\DistLabb2\\ProjectApp\\ProjectApp.csproj",
       "packagesPath": "C:\\Users\\faisa\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\faisa\\RiderProjects\\ProjectApp\\ProjectApp\\obj\\",
+      "outputPath": "C:\\Users\\faisa\\githubproj\\DistLabb2\\ProjectApp\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\faisa\\AppData\\Roaming\\NuGet\\NuGet.Config"
@@ -7724,13 +7724,5 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.403/PortableRuntimeIdentifierGraph.json"
       }
     }
-  },
-  "logs": [
-    {
-      "code": "NU1900",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Error occurred while getting package vulnerability data: Unable to load the service index for source https://api.nuget.org/v3/index.json."
-    }
-  ]
+  }
 }
