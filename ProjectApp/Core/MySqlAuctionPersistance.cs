@@ -1,4 +1,6 @@
-﻿using ProjectApp.Core.Interfaces;
+﻿using System.Data;
+using Microsoft.EntityFrameworkCore;
+using ProjectApp.Core.Interfaces;
 using ProjectApp.Persistance;
 
 namespace ProjectApp.Core;
@@ -119,6 +121,49 @@ public class MySqlAuctionPersistance : IAuctionPersistance
             // Handle the error (e.g., log it) and indicate failure
             Console.WriteLine($"Error updating auction description: {ex.Message}");
         }
+    }
+
+
+    public Auction GetAuctionById(int id)
+    {
+        // Retrieve the auction from the database, including related bids
+        AuctionDb? auctionDb = auctionDbContext.AuctionsDbs
+            .Where(a => a.Id == id)
+            .Include(a => a.BidDbs) // Eager loading of related bids
+            .FirstOrDefault();
+
+        // Handle the case where the auction does not exist
+        if (auctionDb == null) throw new DataException("Auction not found");
+
+        // Manually map fields from AuctionDb to Auction
+        Auction auction = new Auction
+        {
+            Id = auctionDb.Id,
+            Name = auctionDb.Name,
+            Description = auctionDb.Description,
+            StartPrice = auctionDb.StartPrice,
+            AuctionEndTime = auctionDb.AuctionEndTime,
+            Username = auctionDb.Username,
+        };
+
+        // Sort bids by amount in descending order and map them to the Auction object
+        var sortedBids = auctionDb.BidDbs
+            .OrderByDescending(bidDb => bidDb.Amount) // Sorting by Amount
+            .Select(bidDb => new Bid
+            {
+                BidId = bidDb.BidId,
+                Amount = bidDb.Amount,
+                TimeOfBid = bidDb.TimeOfBid,
+                username = bidDb.username,
+            });
+
+        // Add each sorted bid to the Auction object
+        foreach (var bid in sortedBids)
+        {
+            auction.AddBid(bid); // Using the AddBid method to add each bid
+        }
+
+        return auction;
     }
 
 }

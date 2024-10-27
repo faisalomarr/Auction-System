@@ -16,6 +16,8 @@ public class Auction
     public IEnumerable<Bid> Bids => _bids;
     
     
+    public Auction() { }
+
     public Auction(int id ,string name, string description, decimal startPrice, DateTime endDateTime, String username)
     {
         Id = id;

@@ -10,4 +10,6 @@ public interface IAuctionPersistance
     
     void AddAuction(Auction auction);
     void ChangeAuctionDescription(int auctionId, String description,string username);
+    
+    Auction GetAuctionById(int auctionId);
 }

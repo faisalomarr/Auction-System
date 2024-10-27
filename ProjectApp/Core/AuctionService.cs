@@ -64,4 +64,18 @@ public class AuctionService : IAuctionService
         
         _auctionPersistance.ChangeAuctionDescription(auctionId, description,username);
     }
+
+    public Auction GetAuctionById(int auctionId)
+    {
+        
+        Auction auction = _auctionPersistance.GetAuctionById(auctionId);
+        if (auction == null)
+        {
+            throw new ArgumentException("Auction not found");
+        }
+
+        return auction;
+    }
+    
+    
 }

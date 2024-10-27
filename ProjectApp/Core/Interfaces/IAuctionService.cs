@@ -9,4 +9,6 @@ public interface IAuctionService
     void AddAuction(String username, String title , decimal price, DateTime endDate);
     
     void ChangeAuctionDecription(int auctionId, string description,string username);
+    
+    Auction GetAuctionById(int auctionId);
 }
