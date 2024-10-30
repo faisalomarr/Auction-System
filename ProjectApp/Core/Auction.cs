@@ -1,8 +1,7 @@
 ﻿namespace ProjectApp.Core;
 
-public class Auction
+public class Auction : BaseEntity
 {
-    public int Id { get; set; } // Ensure this property is present
     public string Name { get; set; }
     public string Description { get; set; }
     public decimal StartPrice { get; set; }

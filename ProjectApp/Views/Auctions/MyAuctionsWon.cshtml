@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ProjectApp.Models.Auctions.AuctionsVm>
+
+@{
+    ViewData["Title"] = "My Auctions Won";
+}
+
+<h1>My Auctions</h1>
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <p class="text-danger">@ViewBag.ErrorMessage</p>
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>@Html.DisplayNameFor(model => model.Name)</th>
+        <th>@Html.DisplayNameFor(model => model.Description)</th>
+        <th>@Html.DisplayNameFor(model => model.Price)</th>
+        <th>@Html.DisplayNameFor(model => model.AuctionEndTime)</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var auction in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => auction.Name)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Description)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Price)</td>
+            <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = auction.Id })
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

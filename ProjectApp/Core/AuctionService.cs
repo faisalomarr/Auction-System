@@ -76,6 +76,36 @@ public class AuctionService : IAuctionService
 
         return auction;
     }
+
+    public List<Auction> GetAuctionsOfUser(string username)
+    {
+        List<Auction> auctions = _auctionPersistance.GetAuctionsOfUser(username);
+        return auctions;
+
+    }
+
+    public List<Auction> GetAuctionsToBid(string username)
+    {
+        List<Auction> auctions = new List<Auction>();
+        List<Auction> auctionsStillinBid = new List<Auction>();
+
+        auctions = _auctionPersistance.GetAuctionsToBid(username);
+        foreach (Auction auction in auctions)
+        {
+            if (auction.AuctionEndTime > DateTime.Now)
+            {
+                auctionsStillinBid.Add(auction);
+            }
+        }
+        auctionsStillinBid.Sort((a1, a2) => a1.AuctionEndTime.CompareTo(a2.AuctionEndTime));
+        return auctionsStillinBid;
+    }
+
+    public List<Auction> GetAuctionsWon(string username)
+    {
+       return _auctionPersistance.GetAuctionsWon(username);
+    }
+    
     
     
 }

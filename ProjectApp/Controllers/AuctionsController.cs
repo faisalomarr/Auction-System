@@ -1,10 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
 using ProjectApp.Models.Auctions;
 
 namespace ProjectApp.Controllers
-{
+{    
+    [Authorize] 
     public class AuctionsController : Controller
     {
         
@@ -51,8 +53,89 @@ namespace ProjectApp.Controllers
 
                 return View(auctionsVms);
             }
-
         
+        [HttpGet("Auctions/MyAuctions")] 
+        public ActionResult MyAuctions()
+        {
+            List<AuctionsVm> auctionsVms = new List<AuctionsVm>();
+
+            try
+            {
+                // Get auctions that belongs to the logged-in user
+                List<Auction> auctions = _auctionService.GetAuctionsOfUser(User.Identity.Name);
+
+                // Convert auctions to view models
+                foreach (Auction auction in auctions)
+                {
+                    auctionsVms.Add(AuctionsVm.FromAuction(auction));
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "An error occurred while loading auctions. Please try again later.";
+            }
+
+            return View(auctionsVms);
+            
+        }
+        
+        [HttpGet("Auctions/Won")] 
+        public ActionResult MyAuctionsWon()
+        {
+            List<AuctionsVm> auctionsVms = new List<AuctionsVm>();
+
+            try
+            {
+                // Get auctions that belongs to the logged-in user
+                List<Auction> auctions = _auctionService.GetAuctionsWon(User.Identity.Name);
+
+                // Convert auctions to view models
+                foreach (Auction auction in auctions)
+                {
+                    auctionsVms.Add(AuctionsVm.FromAuction(auction));
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "An error occurred while loading auctions. Please try again later.";
+            }
+
+            return View(auctionsVms);
+            
+        }
+        
+        [HttpGet("Auctions/PlaceBid")] 
+        public ActionResult PlaceBid()
+        {
+            List<AuctionsVm> auctionsVms = new List<AuctionsVm>();
+
+            try
+            {
+                // Get auctions that the logged-in user can bid on
+                List<Auction> auctions = _auctionService.GetAuctionsToBid(User.Identity.Name);
+                
+                // Convert auctions to view models
+                foreach (Auction auction in auctions)
+                {
+                    auctionsVms.Add(AuctionsVm.FromAuction(auction));
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "An error occurred while loading auctions. Please try again later.";
+            }
+            
+            return View(auctionsVms);
+        }
+
+        /*[HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult PlaceBid(AuctionsVm auctionsVm)
+        {
+            
+        }*/
+
+                
 
         // GET: AuctionsController/Details/5
         public ActionResult Details(int id)
@@ -137,5 +220,6 @@ namespace ProjectApp.Controllers
                 return View();
             }
         }
+
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Data;
-using Microsoft.EntityFrameworkCore;
-using ProjectApp.Core.Interfaces;
-using ProjectApp.Persistance;
+﻿namespace ProjectApp.Persistance;
 
-namespace ProjectApp.Core;
+using System.Data;
+using Microsoft.EntityFrameworkCore;
+using ProjectApp.Core;
+using ProjectApp.Core.Interfaces;
+
 
 public class MySqlAuctionPersistance : IAuctionPersistance
 {
@@ -54,11 +55,6 @@ public class MySqlAuctionPersistance : IAuctionPersistance
         // Step 3: Return the list of Auction objects
         return auctions;
         
-    }
-
-    public List<Auction> GetAuctionsWhereBidHighest(string username)
-    {
-        return null;
     }
 
 
@@ -151,7 +147,7 @@ public class MySqlAuctionPersistance : IAuctionPersistance
             .OrderByDescending(bidDb => bidDb.Amount) // Sorting by Amount
             .Select(bidDb => new Bid
             {
-                BidId = bidDb.BidId,
+                Id = bidDb.BidId,
                 Amount = bidDb.Amount,
                 TimeOfBid = bidDb.TimeOfBid,
                 username = bidDb.username,
@@ -165,5 +161,80 @@ public class MySqlAuctionPersistance : IAuctionPersistance
 
         return auction;
     }
+
+    public List<Auction> GetAuctionsOfUser(string username)
+    {
+        // Step 1: Retrieve AuctionDb records where the Username matches, without including Bid data
+        List<AuctionDb> auctionDbs = auctionDbContext.AuctionsDbs
+            .Where(auction => auction.Username == username) // Filter by username
+            .ToList();
+
+        // Step 2: Convert each AuctionDb to an Auction without including bids
+        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction
+        {
+            Id = auctionDb.Id,
+            Name = auctionDb.Name,
+            Description = auctionDb.Description,
+            StartPrice = auctionDb.StartPrice,
+            AuctionEndTime = auctionDb.AuctionEndTime,
+            Username = auctionDb.Username
+        }).ToList();
+
+        return auctions;
+    }
+
+    public List<Auction> GetAuctionsToBid(string username)
+    {
+        // Retrieve auctions that the specified user does not own
+        List<AuctionDb> auctionDbs = auctionDbContext.AuctionsDbs
+            .Where(auction => auction.Username != username) // Exclude user's own auctions
+            .ToList();
+
+        // Convert each AuctionDb to an Auction without including bids
+        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction
+        {
+            Id = auctionDb.Id,
+            Name = auctionDb.Name,
+            Description = auctionDb.Description,
+            StartPrice = auctionDb.StartPrice,
+            AuctionEndTime = auctionDb.AuctionEndTime,
+            Username = auctionDb.Username
+        }).ToList();
+
+        return auctions;
+    }
+    
+    public List<Auction> GetAuctionsWon(string username)
+    {
+        // Retrieve auctions where the auction has ended and the user placed the highest bid
+        var wonAuctions = auctionDbContext.AuctionsDbs
+            .Where(a => a.AuctionEndTime < DateTime.Now && a.BidDbs.Any()) // Only past auctions with bids
+            .Select(a => new
+            {
+                Auction = a,
+                HighestBid = a.BidDbs.OrderByDescending(b => b.Amount).FirstOrDefault() // Get the highest bid per auction
+            })
+            .Where(result => result.HighestBid != null && result.HighestBid.username == username) // Ensure user has the highest bid
+            .Select(result => result.Auction) // Select the auction itself
+            .ToList();
+
+        // Map AuctionDb to Auction model for return
+        return wonAuctions.Select(a => new Auction
+        {
+            Id = a.Id,
+            Name = a.Name,
+            Description = a.Description,
+            StartPrice = HighestBid,
+            AuctionEndTime = a.AuctionEndTime,
+            Username = a.Username
+        }).ToList();
+    }
+
+    
+    
+    
+    
+    
+    
 
 }

@@ -11,4 +11,13 @@ public interface IAuctionService
     void ChangeAuctionDecription(int auctionId, string description,string username);
     
     Auction GetAuctionById(int auctionId);
+    
+    List<Auction> GetAuctionsOfUser(string username);
+    
+    List<Auction> GetAuctionsToBid(string username);
+    
+    public List<Auction> GetAuctionsWon(string username);
+
+
+    
 }
