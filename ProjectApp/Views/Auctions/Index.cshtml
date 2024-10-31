@@ -5,19 +5,26 @@ Layout = null;
 }
 
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Index</title>
+    <style>
+        .vertical-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Adjust the spacing between links */
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-<p>
-    <a asp-action="Create">Create New</a>
-    <a asp-action="MyAuctions">My Auctions</a>
-    <a asp-action="PlaceBid">Place Bids</a>
-
-</p>
+<div class="vertical-links">
+    <a asp-action="Create">Create New Auction</a>
+    <a asp-action="MyAuctions">Show My Auctions</a>
+    <a asp-action="CreateBid">Place Bids</a>
+    <a asp-action="MyAuctionsWon">Auctions Won</a>
+</div>
 <table class="table">
     <thead>
     <tr>

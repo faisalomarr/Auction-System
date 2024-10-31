@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
 using ProjectApp.Models.Auctions;
+using ProjectApp.Models.Bids;
 
 namespace ProjectApp.Controllers
 {    
@@ -78,6 +79,7 @@ namespace ProjectApp.Controllers
             return View(auctionsVms);
             
         }
+        
         
         [HttpGet("Auctions/Won")] 
         public ActionResult MyAuctionsWon()
@@ -220,6 +222,33 @@ namespace ProjectApp.Controllers
                 return View();
             }
         }
-
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateBid(AddBidVm addBidVm)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _auctionService.AddBid(User.Identity.Name, addBidVm.Price ,addBidVm.AuctionId);
+                    return RedirectToAction("Index");
+                }
+                return View(addBidVm);
+            }
+            catch
+            {
+                return View(addBidVm);
+            }
+        }
+        
+        [HttpGet]
+        public ActionResult CreateBid()
+        {
+            return View();
+        }
+    
     }
+    
+    
 }

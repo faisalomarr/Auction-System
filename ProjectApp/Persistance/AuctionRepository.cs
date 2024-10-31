@@ -1,16 +1,15 @@
-﻿namespace ProjectApp.Persistance;
-
-using System.Data;
+﻿using System.Data;
 using Microsoft.EntityFrameworkCore;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
 
+namespace ProjectApp.Persistance;
 
-public class MySqlAuctionPersistance : IAuctionPersistance
+public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
 {
     private readonly AuctionDbContext auctionDbContext;
 
-    public MySqlAuctionPersistance(AuctionDbContext auctionDbContext)
+    public AuctionRepository(AuctionDbContext auctionDbContext) : base(auctionDbContext)
     {
         this.auctionDbContext = auctionDbContext;
     }
@@ -295,9 +294,5 @@ public class MySqlAuctionPersistance : IAuctionPersistance
 
         Console.WriteLine($"Bid of {bid} added successfully for auction with ID {auctionId} by user {username}");
     }
-
-    
-    
-    
 
 }

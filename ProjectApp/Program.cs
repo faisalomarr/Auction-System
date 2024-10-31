@@ -13,7 +13,8 @@ builder.Services.AddControllersWithViews();
 
 // Register Auction service and persistence
 builder.Services.AddScoped<IAuctionService, AuctionService>();
-builder.Services.AddScoped<IAuctionPersistance, MySqlAuctionPersistance>();
+
+builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
 
 // Register AuctionDbContext with MySQL
 builder.Services.AddDbContext<AuctionDbContext>(options => 

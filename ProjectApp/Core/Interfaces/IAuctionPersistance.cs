@@ -15,6 +15,9 @@ public interface IAuctionPersistance
     
     List<Auction> GetAuctionsToBid(string username);
     public List<Auction> GetAuctionsWon(string username);
+    
+    void AddBid(int AuctionId, decimal bid ,String username);
+
 
 
 }

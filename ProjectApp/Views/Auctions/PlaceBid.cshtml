@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ProjectApp.Models.Auctions.AuctionsVm>
 
 @{
-ViewData["Title"] = "Place a Bid";
+    ViewData["Title"] = "Place a Bid";
 }
 
 <h1>Auctions Available for Bidding</h1>
@@ -19,19 +19,19 @@ ViewData["Title"] = "Place a Bid";
     <tbody>
     @foreach (var auction in Model)
     {
-    <tr>
-        <td>@Html.DisplayFor(modelItem => auction.Name)</td>
-        <td>@Html.DisplayFor(modelItem => auction.Description)</td>
-        <td>@Html.DisplayFor(modelItem => auction.Price)</td>
-        <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
-        <td>
-            <form asp-action="PlaceBid" method="post">
-                <input type="hidden" name="AuctionId" value="@auction.Id" />
-                <input type="number" name="BidAmount" step="0.01" placeholder="Enter bid" required />
-                <button type="submit">Place Bid</button>
-            </form>
-        </td>
-    </tr>
+        <tr>
+            <td>@Html.DisplayFor(modelItem => auction.Name)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Description)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Price)</td>
+            <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
+            <td>
+                <form asp-action="PlaceBid" method="post">
+                    <input type="hidden" name="AuctionId" value="@auction.Id" />
+                    <input type="number" name="BidAmount" step="0.01" placeholder="Enter bid" required />
+                    <button type="submit">Place Bid</button>
+                </form>
+            </td>
+        </tr>
     }
     </tbody>
 </table>

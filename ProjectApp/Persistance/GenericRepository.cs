@@ -1,26 +1,37 @@
-﻿using ProjectApp.Core;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
 namespace ProjectApp.Persistance;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {
+    public readonly AuctionDbContext _context;
+    public DbSet<T> entity => _context.Set<T>();
+    public GenericRepository(AuctionDbContext context)
+    {
+        context = _context;
+    }
+
     public void Add(T entity)
     {
-        throw new NotImplementedException();
+        this.entity.Add(entity);   
+        _context.SaveChanges(); 
     }
-
-    public void Update(T entity)
-    {
-        throw new NotImplementedException();
-    }
-
+    
     public List<T> GetAll()
     {
-        throw new NotImplementedException();
+        return this.entity.ToList();   
     }
 
     public T GetById(int id)
     {
-        throw new NotImplementedException();
+        var entity = _context.Find<T>(id);
+        return entity;
+    }
+
+    public void Update(T entity)
+    {
+        _context.Update(entity);
+        _context.SaveChanges(); 
     }
 }
