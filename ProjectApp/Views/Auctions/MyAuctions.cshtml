@@ -24,15 +24,19 @@ ViewData["Title"] = "My Auctions";
     <tbody>
     @foreach (var auction in Model)
     {
-    <tr>
-        <td>@Html.DisplayFor(modelItem => auction.Name)</td>
-        <td>@Html.DisplayFor(modelItem => auction.Description)</td>
-        <td>@Html.DisplayFor(modelItem => auction.Price)</td>
-        <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = auction.Id })
-        </td>
-    </tr>
+        <tr>
+            <td>@Html.DisplayFor(modelItem => auction.Name)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Description)</td>
+            <td>@Html.DisplayFor(modelItem => auction.Price)</td>
+            <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = auction.Id })
+            </td>
+        </tr>
     }
     </tbody>
 </table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

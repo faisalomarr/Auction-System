@@ -6,7 +6,7 @@ public interface IAuctionService
     
     List<Auction> GetAuctionsWhereBid(string username);
     
-    void AddAuction(String username, String title , decimal price, DateTime endDate);
+    void AddAuction(String username, String title , decimal price, DateTime endDate, string description);
     
     void ChangeAuctionDecription(int auctionId, string description,string username);
     

@@ -50,13 +50,13 @@ public class AuctionService : IAuctionService
 
     
 
-    public void AddAuction(String username, String title , decimal price, DateTime endDate)
+    public void AddAuction(String username, String title , decimal price, DateTime endDate, String description)
     {
         if (username == null || title == null || title == "")
         {
             throw new ArgumentNullException();
         }
-        Auction auction = new Auction(-10,title,"",price,endDate,username);
+        Auction auction = new Auction(-10,title,description,price,endDate,username);
         _auctionRepository.AddAuction(auction);
     }
 

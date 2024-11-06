@@ -6,32 +6,40 @@ ViewData["Title"] = "Auction Details";
 
 <h1>Auction Details</h1>
 
-<div>
-    <h4>@Model.Name</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">Name</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
+@if (ViewBag.ErrorMessage != null)
+{
+<p class="text-danger">@ViewBag.ErrorMessage</p>
+}
+else
+{
 
-        <dt class="col-sm-2">Description</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
+    <div>
+        <h4>@Model.Name</h4>
+        <hr/>
+        <dl class="row">
+            <dt class="col-sm-2">Name</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Name)</dd>
 
-        <dt class="col-sm-2">End Date</dt>
-        <dd class="col-sm-10">@Html.DisplayFor(model => model.AuctionEndTime, "{0:dd/MM/yyyy}")</dd>
-        
-    </dl>
-</div>
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.Description)</dd>
 
-<div>
-    <h4>Bids</h4>
-    <ul>
-        @foreach (var bid in Model._bidsVMs)
-        {
-        <li>@bid.Amount.ToString("C")</li>
-        }
-    </ul>
-</div>
+            <dt class="col-sm-2">End Date</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.AuctionEndTime, "{0:dd/MM/yyyy}")</dd>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+        </dl>
+    </div>
+
+    <div>
+        <h4>Bids</h4>
+        <ul>
+            @foreach (var bid in Model._bidsVMs)
+            {
+                <li>@bid.Amount.ToString("C")</li>
+            }
+        </ul>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+}

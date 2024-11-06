@@ -36,10 +36,13 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
     public List<Auction> GetAuctionsWhereBid(string username)
     {
         List<AuctionDb> auctionDbs = (from bid in auctionDbContext.BidDbs
-            join auction in auctionDbContext.AuctionsDbs
-                on bid.AuctionId equals auction.Id
-            where bid.username == username
-            select auction).ToList();
+                join auction in auctionDbContext.AuctionsDbs 
+                    on bid.AuctionId equals auction.Id
+                where bid.username == username
+                select auction)
+            .GroupBy(a => a.Id)
+            .Select(g => g.First())
+            .ToList();
 
         // Step 2: Convert each AuctionDb to an Auction using a constructor
         List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction(
@@ -127,8 +130,8 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
             .Include(a => a.BidDbs) // Eager loading of related bids
             .FirstOrDefault();
 
-        // Handle the case where the auction does not exist
-        if (auctionDb == null) throw new DataException("Auction not found");
+        // Handle the case where the auction does not exist or time passed
+        if (auctionDb == null || auctionDb.AuctionEndTime<=DateTime.Now) throw new DataException("Auction not found");
 
         // Manually map fields from AuctionDb to Auction
         Auction auction = new Auction

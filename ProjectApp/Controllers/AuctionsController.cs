@@ -105,50 +105,34 @@ namespace ProjectApp.Controllers
             return View(auctionsVms);
             
         }
-        
-        [HttpGet("Auctions/PlaceBid")] 
-        public ActionResult PlaceBid()
-        {
-            List<AuctionsVm> auctionsVms = new List<AuctionsVm>();
-
-            try
-            {
-                // Get auctions that the logged-in user can bid on
-                List<Auction> auctions = _auctionService.GetAuctionsToBid(User.Identity.Name);
-                
-                // Convert auctions to view models
-                foreach (Auction auction in auctions)
-                {
-                    auctionsVms.Add(AuctionsVm.FromAuction(auction));
-                }
-            }
-            catch (Exception ex)
-            {
-                ViewBag.ErrorMessage = "An error occurred while loading auctions. Please try again later.";
-            }
-            
-            return View(auctionsVms);
-        }
-
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult PlaceBid(AuctionsVm auctionsVm)
-        {
-            
-        }*/
-
-                
 
         // GET: AuctionsController/Details/5
         public ActionResult Details(int id)
         {
-            
-            Auction auction = _auctionService.GetAuctionById(id);
-            if (auction == null) return BadRequest();
-            
-            AuctionDetailsVm detailsVm = AuctionDetailsVm.FromAuction(auction);
+            AuctionDetailsVm detailsVm = null;
+
+            try
+            {
+                // Get the auction details using the provided ID
+                Auction auction = _auctionService.GetAuctionById(id);
+
+                if (auction == null)
+                {
+                    ViewBag.ErrorMessage = "Auction not found.";
+                    return View(); // Return the view with ViewBag.ErrorMessage set
+                }
+
+                // Convert auction to view model
+                detailsVm = AuctionDetailsVm.FromAuction(auction);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = "An error occurred while loading auction details. Please try again later.";
+            }
+
             return View(detailsVm);
         }
+
 
         // GET: AuctionsController/Create
         public ActionResult Create()
@@ -165,7 +149,7 @@ namespace ProjectApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _auctionService.AddAuction(User.Identity.Name, addAuctionVm.Title, addAuctionVm.Price,addAuctionVm.EndDate);
+                    _auctionService.AddAuction(User.Identity.Name, addAuctionVm.Title, addAuctionVm.Price,addAuctionVm.EndDate, addAuctionVm.Description);
                     return RedirectToAction("Index");
                 }
                 return View(addAuctionVm);
@@ -201,27 +185,6 @@ namespace ProjectApp.Controllers
                 return View(changeDescriptionAuctionVm);
             }
         }
-
-        // GET: AuctionsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: AuctionsController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
         
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -243,10 +206,15 @@ namespace ProjectApp.Controllers
         }
         
         [HttpGet]
-        public ActionResult CreateBid()
+        public ActionResult CreateBid(int auctionId)
         {
-            return View();
+            var bidVm = new AddBidVm
+            {
+                AuctionId = auctionId // Set the auction ID in the view model
+            };
+            return View(bidVm);
         }
+
     
     }
     

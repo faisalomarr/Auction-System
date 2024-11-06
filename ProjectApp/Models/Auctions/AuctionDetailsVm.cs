@@ -1,6 +1,7 @@
 ﻿using ProjectApp.Core;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ProjectApp.Models.Bids;
 
 namespace ProjectApp.Models.Auctions;
 

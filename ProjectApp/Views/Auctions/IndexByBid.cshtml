@@ -9,12 +9,12 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
+    <title>Auctions With Active Bid</title>
 </head>
 <body>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
+<h1>Auctions With Active Bids</h1>
+
 <table class="table">
     <thead>
     <tr>
@@ -34,7 +34,8 @@
     </tr>
     </thead>
     <tbody>
-    @foreach (var item in Model) {
+    @foreach (var item in Model)
+    {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -48,12 +49,12 @@
             <td>
                 @Html.DisplayFor(modelItem => item.AuctionEndTime)
             </td>
-            <td>
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            </td>
         </tr>
     }
     </tbody>
 </table>
 </body>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
 </html>

@@ -1,6 +1,6 @@
 ﻿using ProjectApp.Core;
 
-namespace ProjectApp.Models.Auctions;
+namespace ProjectApp.Models.Bids;
 using System.ComponentModel.DataAnnotations;
 
 public class BidVm

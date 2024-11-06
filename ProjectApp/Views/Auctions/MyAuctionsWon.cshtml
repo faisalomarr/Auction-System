@@ -4,7 +4,7 @@
     ViewData["Title"] = "My Auctions Won";
 }
 
-<h1>My Auctions</h1>
+<h1>Auctions Won</h1>
 
 @if (ViewBag.ErrorMessage != null)
 {
@@ -18,7 +18,6 @@
         <th>@Html.DisplayNameFor(model => model.Description)</th>
         <th>@Html.DisplayNameFor(model => model.Price)</th>
         <th>@Html.DisplayNameFor(model => model.AuctionEndTime)</th>
-        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
@@ -30,9 +29,11 @@
             <td>@Html.DisplayFor(modelItem => auction.Price)</td>
             <td>@Html.DisplayFor(modelItem => auction.AuctionEndTime)</td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { id = auction.Id })
-            </td>
         </tr>
     }
     </tbody>
 </table>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
