@@ -1,20 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using ProjectApp.Core;
 
-namespace ProjectApp.Persistance;
+namespace ProjectApp.Persistence;
 using System.ComponentModel.DataAnnotations.Schema; // Required for DatabaseGeneratedOption
 
 
-public class AuctionDb
+public class AuctionDb : BaseEntity
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
     
     [Required]
     public string Name { get; set; }
     
-    
+    [Required]
+    [MaxLength(100)]
     public string Description { get; set; }
     
     [Required]

@@ -1,17 +1,22 @@
 ﻿using System.Data;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
 
-namespace ProjectApp.Persistance;
+namespace ProjectApp.Persistence;
 
-public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
+public class MySqlAuctionPersistence : IAuctionPersistence
 {
     private readonly AuctionDbContext auctionDbContext;
+    private readonly IMapper mapper;
 
-    public AuctionRepository(AuctionDbContext auctionDbContext) : base(auctionDbContext)
+
+    public MySqlAuctionPersistence(AuctionDbContext auctionDbContext, IMapper mapper)
     {
         this.auctionDbContext = auctionDbContext;
+        this.mapper = mapper;
+        
     }
     
     public List<Auction> GetAuctions()
@@ -149,7 +154,7 @@ public class AuctionRepository : GenericRepository<Auction>, IAuctionRepository
             .OrderByDescending(bidDb => bidDb.Amount) // Sorting by Amount
             .Select(bidDb => new Bid
             {
-                Id = bidDb.BidId,
+                Id = bidDb.Id,
                 Amount = bidDb.Amount,
                 TimeOfBid = bidDb.TimeOfBid,
                 username = bidDb.username,

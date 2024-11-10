@@ -1,13 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectApp.Core;
 
-namespace ProjectApp.Persistance;
+namespace ProjectApp.Persistence;
 
 public class AuctionDbContext : DbContext
 {
     public AuctionDbContext(DbContextOptions<AuctionDbContext> options) : base(options) { }
-    
-    
     
     public DbSet<AuctionDb> AuctionsDbs { get; set; }
     

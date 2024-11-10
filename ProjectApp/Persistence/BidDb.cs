@@ -2,13 +2,10 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using ProjectApp.Core;
 
-namespace ProjectApp.Persistance;
+namespace ProjectApp.Persistence;
 
-public class BidDb
+public class BidDb : BaseEntity
 {
-    [Key]
-    public int BidId { get; set; }
-    
     [Required]
     [MaxLength(100)]
     public string username { get; set; }

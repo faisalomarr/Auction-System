@@ -9,8 +9,6 @@ public class Auction : BaseEntity
     
     public string Username { get; set; }
     
-    
-    
     private List<Bid> _bids = new List<Bid>();
     public IEnumerable<Bid> Bids => _bids;
     

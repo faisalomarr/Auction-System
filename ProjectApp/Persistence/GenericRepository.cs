@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
-namespace ProjectApp.Persistance;
+namespace ProjectApp.Persistence;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
 {

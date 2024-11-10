@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectApp.Core;
 using ProjectApp.Core.Interfaces;
-using ProjectApp.Persistance;
+using ProjectApp.Persistence;
 using Microsoft.AspNetCore.Identity;
 using ProjectApp.Areas.Identity.Data;
 using ProjectApp.Data;
@@ -14,7 +14,7 @@ builder.Services.AddControllersWithViews();
 // Register Auction service and persistence
 builder.Services.AddScoped<IAuctionService, AuctionService>();
 
-builder.Services.AddScoped<IAuctionRepository, AuctionRepository>();
+builder.Services.AddScoped<IAuctionPersistence, MySqlAuctionPersistence>();
 
 // Register AuctionDbContext with MySQL
 builder.Services.AddDbContext<AuctionDbContext>(options => 
@@ -23,6 +23,9 @@ builder.Services.AddDbContext<AuctionDbContext>(options =>
 // Register Identity with ProjectAppUser and ProjectAppContext
 builder.Services.AddDbContext<ProjectAppContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("IdentityDbConnection")));
+
+// auto mappers
+builder.Services.AddAutoMapper(typeof(Program));
 
 // Add Identity only once
 builder.Services.AddDefaultIdentity<ProjectAppUser>(options => 

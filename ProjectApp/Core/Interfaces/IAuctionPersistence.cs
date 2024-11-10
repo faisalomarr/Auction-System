@@ -1,6 +1,8 @@
-﻿namespace ProjectApp.Core.Interfaces;
+﻿using ProjectApp.Persistence;
 
-public interface IAuctionPersistance
+namespace ProjectApp.Core.Interfaces;
+
+public interface IAuctionPersistence
 {
     List<Auction> GetAuctions();
     
@@ -14,10 +16,8 @@ public interface IAuctionPersistance
     List<Auction> GetAuctionsOfUser(string username);
     
     List<Auction> GetAuctionsToBid(string username);
-    public List<Auction> GetAuctionsWon(string username);
+    List<Auction> GetAuctionsWon(string username);
     
     void AddBid(int AuctionId, decimal bid ,String username);
-
-
-
+    
 }
