@@ -13,34 +13,15 @@ public class AuctionService : IAuctionService
     
     public List<Auction> GetAuctions()
     {
-        List<Auction> auctions = new List<Auction>();
-        List<Auction> auctionsStillinBid = new List<Auction>();
-        auctions=_auctionPersistence.GetAuctions();
-        foreach (Auction auction in auctions)
-        {
-            if (auction.AuctionEndTime > DateTime.Now)
-            {
-                auctionsStillinBid.Add(auction);
-            }
-        }
-        auctionsStillinBid.Sort((a1, a2) => a1.AuctionEndTime.CompareTo(a2.AuctionEndTime));
-        return auctionsStillinBid;
+        List<Auction> auctions=_auctionPersistence.GetAuctions();
+        return auctions;
     }
 
     public List<Auction> GetAuctionsWhereBid(string username)
     {
-        List<Auction> auctions = new List<Auction>();
-        List<Auction> auctionsStillInBid = new List<Auction>();
-        auctions = _auctionPersistence.GetAuctionsWhereBid(username);
-        foreach (Auction auction in auctions)
-        {
-            if (auction.AuctionEndTime > DateTime.Now)
-            {
-                auctionsStillInBid.Add(auction);
-            }
-        }
-        return auctionsStillInBid;
-        
+        List<Auction> auctions = _auctionPersistence.GetAuctionsWhereBid(username);
+        return auctions;
+
     }
 
     
@@ -51,7 +32,7 @@ public class AuctionService : IAuctionService
         {
             throw new ArgumentNullException();
         }
-        Auction auction = new Auction(-10,title,description,price,endDate,username);
+        Auction auction = new Auction(title,description,price,endDate,username);
         _auctionPersistence.AddAuction(auction);
     }
 
@@ -84,7 +65,7 @@ public class AuctionService : IAuctionService
 
     }
 
-    public List<Auction> GetAuctionsToBid(string username)
+    /*public List<Auction> GetAuctionsToBid(string username)
     {
         List<Auction> auctions = new List<Auction>();
         List<Auction> auctionsStillinBid = new List<Auction>();
@@ -99,7 +80,7 @@ public class AuctionService : IAuctionService
         }
         auctionsStillinBid.Sort((a1, a2) => a1.AuctionEndTime.CompareTo(a2.AuctionEndTime));
         return auctionsStillinBid;
-    }
+    }*/
 
     public List<Auction> GetAuctionsWon(string username)
     {

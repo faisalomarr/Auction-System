@@ -24,6 +24,15 @@ public class Auction : BaseEntity
         AuctionEndTime = endDateTime;
         Username = username;
     }
+    
+    public Auction(string name, string description, decimal startPrice, DateTime endDateTime, String username)
+    {
+        Name = name;
+        Description = description;
+        StartPrice = startPrice;
+        AuctionEndTime = endDateTime;
+        Username = username;
+    }
 
 
     public void AddBid(Bid bid)

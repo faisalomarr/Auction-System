@@ -8,8 +8,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseEntity
     public readonly AuctionDbContext _context;
     public DbSet<T> entity => _context.Set<T>();
     public GenericRepository(AuctionDbContext context)
-    {
-        context = _context;
+    { 
+        _context = context;
     }
 
     public void Add(T entity)

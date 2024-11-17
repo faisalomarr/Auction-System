@@ -1,4 +1,6 @@
-﻿namespace ProjectApp.Core.Interfaces;
+﻿using ProjectApp.Core;
+
+namespace ProjectApp.Persistence;
 
 public interface IGenericRepository<T> where T : BaseEntity
 {

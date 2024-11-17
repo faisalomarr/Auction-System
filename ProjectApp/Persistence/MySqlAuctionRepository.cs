@@ -21,176 +21,105 @@ public class MySqlAuctionPersistence : IAuctionPersistence
     
     public List<Auction> GetAuctions()
     {
-        // Step 1: Retrieve all AuctionDb objects from the database
-        List<AuctionDb> auctionDbs = auctionDbContext.AuctionsDbs.ToList();
-
-        // Step 2: Convert each AuctionDb to an Auction using a constructor
-        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction(
-            auctionDb.Id,
-            auctionDb.Name,
-            auctionDb.Description,
-            auctionDb.StartPrice,
-            auctionDb.AuctionEndTime,
-            auctionDb.Username
-        )).ToList();
-
-        // Step 3: Return the list of Auction objects
-        return auctions;
+        var auctionDbs = auctionDbContext.AuctionsDbs
+            .Where(a => a.AuctionEndTime> DateTime.Now)
+            .OrderBy(a => a.AuctionEndTime)
+            .ToList();
+        
+        List<Auction> result = new List<Auction>();
+        foreach (AuctionDb auctionDb in auctionDbs)
+        {
+            Auction auction = mapper.Map<Auction>(auctionDb);
+            result.Add(auction);
+        }
+        
+        return result;
     }
 
     public List<Auction> GetAuctionsWhereBid(string username)
     {
-        List<AuctionDb> auctionDbs = (from bid in auctionDbContext.BidDbs
-                join auction in auctionDbContext.AuctionsDbs 
-                    on bid.AuctionId equals auction.Id
-                where bid.username == username
-                select auction)
-            .GroupBy(a => a.Id)
-            .Select(g => g.First())
+        var auctionDbs = auctionDbContext.AuctionsDbs
+            .Where(auction => auctionDbContext.BidDbs
+                .Any(bid => bid.username == username && bid.AuctionId == auction.Id) && auction.AuctionEndTime > DateTime.Now)
+            .Distinct() 
             .ToList();
 
-        // Step 2: Convert each AuctionDb to an Auction using a constructor
-        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction(
-            auctionDb.Id,
-            auctionDb.Name,
-            auctionDb.Description,
-            auctionDb.StartPrice,
-            auctionDb.AuctionEndTime,
-            auctionDb.Username
-        )).ToList();
 
-        // Step 3: Return the list of Auction objects
-        return auctions;
+        List<Auction> result = new List<Auction>();
+        foreach (AuctionDb auctionDb in auctionDbs)
+        {
+            Auction auction = mapper.Map<Auction>(auctionDb);
+            result.Add(auction);
+        }
+        
+        return result;
         
     }
 
-
-    // Implementing AddAuction
+    
     public void AddAuction(Auction auction)
     {
-        try
-        {
-            // Convert Auction object to AuctionDb
-            var auctionDb = new AuctionDb
-            {
-                Name = auction.Name,
-                Description = auction.Description,
-                StartPrice = auction.StartPrice,
-                AuctionEndTime = auction.AuctionEndTime,
-                Username = auction.Username
-            };
-
-            // Add auction to the DbContext and save changes
-            auctionDbContext.AuctionsDbs.Add(auctionDb);
-            auctionDbContext.SaveChanges(); // Persist changes to the database
-            
-        }
-        catch (Exception ex)
-        {
-            // Handle the error (e.g., log it) and return false to indicate failure
-            Console.WriteLine(ex.Message);
-            
-        }
+        AuctionDb auctionDb = mapper.Map<AuctionDb>(auction);
+        
+        auctionDbContext.AuctionsDbs.Add(auctionDb);
+        auctionDbContext.SaveChanges();
     }
+
 
     public void ChangeAuctionDescription(int auctionId, string newDescription, string username)
     {
-        try
-        {
-            // Find the auction by ID
-            var auctionDb = auctionDbContext.AuctionsDbs.FirstOrDefault(a => a.Id == auctionId);
+        var auctionDb = auctionDbContext.AuctionsDbs
+            .FirstOrDefault(a => a.Id == auctionId && a.Username == username);
+
+        if (auctionDb == null){
+            throw new ArgumentException("Auction not found or username does not own the auction");
+        }
+
+        auctionDb.Description = newDescription;
+
+        auctionDbContext.SaveChanges();
         
-            // Check if the auction exists
-            if (auctionDb == null)
-            {
-                Console.WriteLine($"Auction with ID {auctionId} not found.");
-                return;
-            }
-
-            if (!auctionDb.Username.Equals(username))
-            {
-                Console.WriteLine($"username does not own auction with ID {auctionId}");
-                return;
-            }
-
-            // Update the auction's description
-            auctionDb.Description = newDescription;
-
-            // Save the changes to the database
-            auctionDbContext.SaveChanges();
-        }
-        catch (Exception ex)
-        {
-            // Handle the error (e.g., log it) and indicate failure
-            Console.WriteLine($"Error updating auction description: {ex.Message}");
-        }
     }
 
 
     public Auction GetAuctionById(int id)
     {
-        // Retrieve the auction from the database, including related bids
         AuctionDb? auctionDb = auctionDbContext.AuctionsDbs
-            .Where(a => a.Id == id)
-            .Include(a => a.BidDbs) // Eager loading of related bids
+            .Where(a => a.Id == id && a.AuctionEndTime > DateTime.Now)
+            .Include(a => a.BidDbs.OrderByDescending(bidDb => bidDb.Amount)) 
             .FirstOrDefault();
 
-        // Handle the case where the auction does not exist or time passed
-        if (auctionDb == null || auctionDb.AuctionEndTime<=DateTime.Now) throw new DataException("Auction not found");
+        if (auctionDb == null) 
+            throw new DataException("Auction not found");
 
-        // Manually map fields from AuctionDb to Auction
-        Auction auction = new Auction
+        Auction auction = mapper.Map<Auction>(auctionDb);
+        foreach (BidDb bidDb in auctionDb.BidDbs)
         {
-            Id = auctionDb.Id,
-            Name = auctionDb.Name,
-            Description = auctionDb.Description,
-            StartPrice = auctionDb.StartPrice,
-            AuctionEndTime = auctionDb.AuctionEndTime,
-            Username = auctionDb.Username,
-        };
-
-        // Sort bids by amount in descending order and map them to the Auction object
-        var sortedBids = auctionDb.BidDbs
-            .OrderByDescending(bidDb => bidDb.Amount) // Sorting by Amount
-            .Select(bidDb => new Bid
-            {
-                Id = bidDb.Id,
-                Amount = bidDb.Amount,
-                TimeOfBid = bidDb.TimeOfBid,
-                username = bidDb.username,
-            });
-
-        // Add each sorted bid to the Auction object
-        foreach (var bid in sortedBids)
-        {
-            auction.AddBid(bid); // Using the AddBid method to add each bid
+            Bid bid = mapper.Map<Bid>(bidDb);
+            auction.AddBid(bid);
         }
 
         return auction;
     }
 
+
     public List<Auction> GetAuctionsOfUser(string username)
     {
-        // Step 1: Retrieve AuctionDb records where the Username matches, without including Bid data
         List<AuctionDb> auctionDbs = auctionDbContext.AuctionsDbs
-            .Where(auction => auction.Username == username) // Filter by username
+            .Where(auction => auction.Username == username) 
             .ToList();
-
-        // Step 2: Convert each AuctionDb to an Auction without including bids
-        List<Auction> auctions = auctionDbs.Select(auctionDb => new Auction
+        
+        List<Auction> result = new List<Auction>();
+        foreach (AuctionDb auctionDb in auctionDbs)
         {
-            Id = auctionDb.Id,
-            Name = auctionDb.Name,
-            Description = auctionDb.Description,
-            StartPrice = auctionDb.StartPrice,
-            AuctionEndTime = auctionDb.AuctionEndTime,
-            Username = auctionDb.Username
-        }).ToList();
+            Auction auction = mapper.Map<Auction>(auctionDb);
+            result.Add(auction);
+        }
 
-        return auctions;
+        return result;
     }
 
-    public List<Auction> GetAuctionsToBid(string username)
+    /*public List<Auction> GetAuctionsToBid(string username)
     {
         // Retrieve auctions that the specified user does not own
         List<AuctionDb> auctionDbs = auctionDbContext.AuctionsDbs
@@ -209,33 +138,26 @@ public class MySqlAuctionPersistence : IAuctionPersistence
         }).ToList();
 
         return auctions;
-    }
+    }*/
     
     
     public List<Auction> GetAuctionsWon(string username)
     {
-        // Retrieve auctions where the auction has ended and the user placed the highest bid
         var wonAuctions = auctionDbContext.AuctionsDbs
-            .Where(a => a.AuctionEndTime < DateTime.Now && a.BidDbs.Any()) // Only past auctions with bids
-            .Select(a => new
-            {
-                Auction = a,
-                HighestBid = a.BidDbs.OrderByDescending(b => b.Amount).FirstOrDefault() // Get the highest bid per auction
-            })
-            .Where(result => result.HighestBid != null && result.HighestBid.username == username) // Ensure user has the highest bid
-            .Select(result => result.Auction) // Select the auction itself
+            .Where(a => a.AuctionEndTime < DateTime.Now &&
+                        a.BidDbs.Any() &&
+                        a.BidDbs.OrderByDescending(b => b.Amount).FirstOrDefault()!.username == username)
             .ToList();
+        
 
-        // Map AuctionDb to Auction model for return
-        return wonAuctions.Select(a => new Auction
+        List<Auction> result = new List<Auction>();
+        foreach (AuctionDb auctionDb in wonAuctions)
         {
-            Id = a.Id,
-            Name = a.Name,
-            Description = a.Description,
-            StartPrice = a.StartPrice,
-            AuctionEndTime = a.AuctionEndTime,
-            Username = a.Username
-        }).ToList();
+            Auction auction = mapper.Map<Auction>(auctionDb);
+            result.Add(auction);
+        }
+
+        return result;
     }
     
 

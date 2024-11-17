@@ -14,7 +14,7 @@ public interface IAuctionService
     
     List<Auction> GetAuctionsOfUser(string username);
     
-    List<Auction> GetAuctionsToBid(string username);
+    //List<Auction> GetAuctionsToBid(string username);
     
     public List<Auction> GetAuctionsWon(string username);
     
