@@ -28,7 +28,10 @@ public class Auction : BaseEntity
     
     private List<Bid> _bids = new List<Bid>();
     public IEnumerable<Bid> Bids => _bids;
+
     
+    public Auction() { }
+
     public Auction(string name, string description, decimal price, DateTime endDateTime, string username)
     {
         Name = name;
