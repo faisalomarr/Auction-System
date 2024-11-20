@@ -1,29 +1,36 @@
-﻿using ProjectApp.Core.Interfaces;
+﻿using AutoMapper;
+using ProjectApp.Core.Interfaces;
+using ProjectApp.Persistence;
 
 namespace ProjectApp.Core;
 
 public class AuctionService : IAuctionService
 {
     
-    private readonly IAuctionPersistence _auctionPersistence;
-    public AuctionService(IAuctionPersistence auctionPersistence)
+    private readonly IAuctionRepository _auctionRepository;
+    private readonly IBidRepository _bidRepository;
+    private readonly IMapper mapper;
+
+
+    public AuctionService(IAuctionRepository auctionRepository, IBidRepository bidRepository, IMapper mapper )
     {
-        _auctionPersistence = auctionPersistence;
+        _auctionRepository = auctionRepository;
+        _bidRepository = bidRepository;
+        this.mapper=mapper;
     }
     
     public List<Auction> GetAuctions()
     {
-        List<Auction> auctions=_auctionPersistence.GetAuctions();
+        List<Auction> auctions=_auctionRepository.GetAuctions();
         return auctions;
     }
 
     public List<Auction> GetAuctionsWhereBid(string username)
     {
-        List<Auction> auctions = _auctionPersistence.GetAuctionsWhereBid(username);
+        List<Auction> auctions = _auctionRepository.GetAuctionsWhereBid(username);
         return auctions;
 
     }
-
     
 
     public void AddAuction(String username, String title , decimal price, DateTime endDate, String description)
@@ -33,7 +40,9 @@ public class AuctionService : IAuctionService
             throw new ArgumentNullException();
         }
         Auction auction = new Auction(title,description,price,endDate,username);
-        _auctionPersistence.AddAuction(auction);
+        AuctionDb auctionDb = mapper.Map<AuctionDb>(auction);
+        
+        _auctionRepository.Add(auctionDb);
     }
 
     public void ChangeAuctionDecription(int auctionId, string description, String username)
@@ -43,13 +52,13 @@ public class AuctionService : IAuctionService
             throw new ArgumentNullException();
         }
         
-        _auctionPersistence.ChangeAuctionDescription(auctionId, description,username);
+        _auctionRepository.ChangeAuctionDescription(auctionId, description,username);
     }
 
     public Auction GetAuctionById(int auctionId)
     {
         
-        Auction auction = _auctionPersistence.GetAuctionById(auctionId);
+        Auction auction = _auctionRepository.GetAuctionById(auctionId);
         if (auction == null)
         {
             throw new ArgumentException("Auction not found");
@@ -60,46 +69,38 @@ public class AuctionService : IAuctionService
 
     public List<Auction> GetAuctionsOfUser(string username)
     {
-        List<Auction> auctions = _auctionPersistence.GetAuctionsOfUser(username);
+        List<Auction> auctions = _auctionRepository.GetAuctionsOfUser(username);
         return auctions;
 
     }
-
-    /*public List<Auction> GetAuctionsToBid(string username)
-    {
-        List<Auction> auctions = new List<Auction>();
-        List<Auction> auctionsStillinBid = new List<Auction>();
-
-        auctions = _auctionPersistence.GetAuctionsToBid(username);
-        foreach (Auction auction in auctions)
-        {
-            if (auction.AuctionEndTime > DateTime.Now)
-            {
-                auctionsStillinBid.Add(auction);
-            }
-        }
-        auctionsStillinBid.Sort((a1, a2) => a1.AuctionEndTime.CompareTo(a2.AuctionEndTime));
-        return auctionsStillinBid;
-    }*/
 
     public List<Auction> GetAuctionsWon(string username)
     {
         if (username == null)
         {
             throw new ArgumentNullException();
-        }
-       return _auctionPersistence.GetAuctionsWon(username);
+        } 
+        return _auctionRepository.GetAuctionsWon(username);
     }
 
     public void AddBid(string username, decimal bid, int auctionId)
     {
-        if (auctionId < 1 || bid < 0 || username == null)
-        {
-            throw new ArgumentNullException();
-        }
-        Console.WriteLine("test");
+        AuctionDb auction = _auctionRepository.GetById(auctionId);
 
-        _auctionPersistence.AddBid(auctionId, bid, username);
+        if (auction == null || auction.username == username || auction.AuctionEndTime < DateTime.Now )
+        {
+            throw new Exception("Auction not found");
+        }
+
+        if (auction.Price > bid)
+        {
+            throw new ArgumentException("Bid invalid");
+        }
+
+        Bid userBid = new Bid(bid, DateTime.Now,username,auctionId );
+        BidDb userBidDb = mapper.Map<BidDb>(userBid);
+
+        _bidRepository.Add(userBidDb);
     }
     
     

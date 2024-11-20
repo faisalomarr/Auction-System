@@ -9,7 +9,7 @@ public class Bid : BaseEntity
     
     public String username { get; set; }
     
-    //public int AuctionId { get; set; }
+    public int AuctionId { get; set; }
 
     public Bid(decimal amount)
     {
@@ -17,14 +17,12 @@ public class Bid : BaseEntity
         TimeOfBid = DateTime.Now;
     }
     
-    public Bid(int bidId, decimal amount, DateTime timeOfBid, String userName)
+    public Bid( decimal amount, DateTime timeOfBid, String userName, int auctionId)
     {
-        Id = bidId;
         Amount = amount;
         TimeOfBid = timeOfBid;
         username = userName;
+        AuctionId = auctionId;
     }
-    
-    public Bid() { }
 
 }

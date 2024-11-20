@@ -16,7 +16,7 @@ public class AuctionDb : BaseEntity
     public string Description { get; set; }
     
     [Required]
-    public decimal StartPrice { get; set; }
+    public decimal Price { get; set; }
     
     [Required]
     [DataType(DataType.DateTime)]
@@ -24,7 +24,7 @@ public class AuctionDb : BaseEntity
     
     [Required]
     [MaxLength(100)] 
-    public String Username { get; set; }
+    public String username { get; set; }
     
     public List<BidDb> BidDbs { get; set; } = new List<BidDb>();
     
